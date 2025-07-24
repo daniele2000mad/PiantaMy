@@ -1,7 +1,12 @@
-<!DOCTYPE html><html lang="it">
+<!DOCTYPE html>
+<html lang="it">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="theme-color" content="#74c69d">
+  <meta name="mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <link rel="manifest" href="manifest.json" />
   <title>PiantaMy - Registro di Crescita</title>
   <style>
     body {
@@ -82,7 +87,9 @@
     <input type="file" id="photo" accept="image/*" />
     <button onclick="saveEntry()">Salva</button>
   </div>
-  <div id="entries"></div>  <script>
+  <div id="entries"></div>
+
+  <script>
     function saveEntry() {
       const plantname = document.getElementById("plantname").value;
       const date = document.getElementById("date").value;
@@ -105,7 +112,6 @@
         entries.push(entry);
         localStorage.setItem("entries", JSON.stringify(entries));
         showEntries();
-        askNotificationPermission();
         notify("Salvataggio effettuato 🌿");
       };
 
@@ -142,18 +148,17 @@
       showEntries();
     }
 
-    function askNotificationPermission() {
-      if (Notification.permission !== "granted") {
-        Notification.requestPermission();
-      }
-    }
-
     function notify(message) {
       if (Notification.permission === "granted") {
         new Notification(message);
+      } else if (Notification.permission !== "denied") {
+        Notification.requestPermission().then(permission => {
+          if (permission === "granted") new Notification(message);
+        });
       }
     }
 
     showEntries();
-  </script></body>
+  </script>
+</body>
 </html>
